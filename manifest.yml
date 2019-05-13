@@ -5,4 +5,4 @@ applications:
   instances: 1
   random-route: true
   buildpacks:
-  - https://github.com/cloudfoundry/java-buildpack.git
+  - https://github.com/Laxmipriya22/petclinic.git
