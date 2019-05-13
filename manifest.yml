@@ -1,10 +1,8 @@
 ---
 applications:
 - name: cf-demo
-- buildpack: go_buildpack
-  env:
-    GOVERSION: 1.x
-    GOPACKAGENAME: github.com/Laxmipriya22/petclinic
   memory: 768M
   instances: 1
   random-route: true
+  buildpacks:
+  - https://github.com/Laxmipriya22/java-buildpack.git
