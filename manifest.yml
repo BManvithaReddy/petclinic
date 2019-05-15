@@ -1,6 +1,6 @@
 ---
 applications:
-- name: cf-demo
+- name: petclinic
   memory: 768M
   instances: 1
   random-route: true
