@@ -4,6 +4,6 @@ applications:
   memory: 768M
   instances: 1
   random-route: true
-  path: target\petclinic.war
+  path: target/petclinic.war
   buildpacks:
   - https://github.com/Laxmipriya22/java-buildpack.git
