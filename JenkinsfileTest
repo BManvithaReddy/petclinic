@@ -1,0 +1,48 @@
+pipeline {
+agent any
+stages {
+stage('compile,test and package') {
+steps {
+sh 'mvn clean package'
+}
+}
+stage('SonarQube analysis') { 
+steps {
+withSonarQubeEnv('sonar') { 
+
+sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar ' + 
+'-f pom.xml ' +
+'-Dsonar.projectKey=com.huettermann:all:master ' + 
+'-Dsonar.language=java ' +
+'-Dsonar.sources=. ' +
+'-Dsonar.tests=. ' +
+'-Dsonar.test.inclusions=**/*Test*/** ' +
+'-Dsonar.exclusions=**/*Test*/**'
+
+}
+}
+}
+stage('archival') {
+steps {
+
+archiveArtifacts 'target/*.?ar'
+
+}
+}
+stage('Artifact Uploader') {
+           steps {
+               nexusArtifactUploader artifacts: [[artifactId: 'spring-petclinic', file: 'target/petclinic.war', type: 'war']],  credentialsId: 'nexusAdminCreds', groupId: 'org.springframework.samples',nexusUrl: '192.168.52.169:8081/nexus', nexusVersion: 'nexus2', protocol: 'http', repository: 'releases', version: '4.2.6-SNAPSHOT'
+           }
+       }
+       stage('Deploy to PreProd') {
+           steps {
+               sh '''
+                   scp build/libs/petclinic.war tomcat@198.168.52.110:/opt/tomcat/webapps/petclinic.war;
+                   ssh tomcat@192.168.52.110 /opt/tomcat/bin/shutdown.sh;
+                   ssh tomcat@192.168.52.110 /opt/tomcat/bin/startup.sh
+               '''
+               //sshPublisher(publishers: [sshPublisherDesc(configName: 'preprod', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '/opt/tomcat/bin/shutdown.sh;sleep 5;/opt/tomcat/bin/startup.sh', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/tomcat/webapps/', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'build/libs/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+           }
+       }
+}
+}
