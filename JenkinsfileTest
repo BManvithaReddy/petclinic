@@ -22,7 +22,7 @@ stage('Artifact Uploader') {
        stage('Deploy to PreProd') {
            steps {
                sh '''
-                   scp build/libs/petclinic.war tomcat@198.168.52.110:/opt/tomcat/webapps/petclinic.war;
+                   scp target/petclinic.war tomcat@192.168.52.110:/opt/tomcat/webapps/petclinic.war;
                    ssh tomcat@192.168.52.110 /opt/tomcat/bin/shutdown.sh;
                    ssh tomcat@192.168.52.110 /opt/tomcat/bin/startup.sh
                '''
