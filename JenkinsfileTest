@@ -19,20 +19,20 @@ pipeline {
         				        junit 'target/surefire-reports/*.xml'
 				        }
     		                }
-                                stage('Publish') {
+                                stage('Artifact Uploader') {
                                        
                                         steps {
                                                 //nexusPublisher nexusInstanceId: 'nexus2', nexusRepositoryId: 'snapshots', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/petclinic.war']], mavenCoordinate: [artifactId: 'spring-petclinic', groupId: 'org.springframework.samples', packaging: 'war', version: '4.2.6-SNAPSHOT']]]
-                                                nexusArtifactUploader artifacts: [[artifactId: 'spring-petclinic', classifier: '', file: 'target/petclinic.war', type: 'war']], credentialsId: 'nexuscred', groupId: 'org.springframework.samples', nexusUrl: '192.168.52.169:8081/nexus', nexusVersion: 'nexus2', protocol: 'http', repository: 'snapshots', version: '4.2.6-SNAPSHOT'
+                                                nexusArtifactUploader artifacts: [[artifactId: 'spring-petclinic', file: 'target/petclinic.war', type: 'war']], credentialsId: 'nexusAdminCreds', groupId: 'org.springframework.samples', nexusUrl: '192.168.52.169:8081/nexus', nexusVersion: 'nexus2', protocol: 'http', repository: 'releases', version: '1.0.${BUILD_NUMBER}'
 
                                         }
                                 }
                                 stage('Deploy to PreProd') {
            steps {
                sh '''
-                   scp target/petclinic.war tomcat@192.168.52.110:/opt/tomcat/webapps/petclinic.war;
-                   ssh tomcat@192.168.52.110 /opt/tomcat/bin/shutdown.sh;
-                   ssh tomcat@192.168.52.110 /opt/tomcat/bin/startup.sh
+                   scp target/petclinic.war root@192.168.52.110:/opt/tomcat/webapps/petclinic.war;
+                   ssh root@192.168.52.110 /opt/tomcat/bin/shutdown.sh;
+                   ssh root@192.168.52.110 /opt/tomcat/bin/startup.sh
                '''
                //sshPublisher(publishers: [sshPublisherDesc(configName: 'preprod', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '/opt/tomcat/bin/shutdown.sh;sleep 5;/opt/tomcat/bin/startup.sh', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/tomcat/webapps/', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'build/libs/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
 }
