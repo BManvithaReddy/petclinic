@@ -59,7 +59,7 @@ pipeline {
                                 stage('Deploy to PreProd') {
            steps {
                sh '''
-                   scp build/libs/petclinic.war tomcat@192.168.52.110:/opt/tomcat/webapps/petclinic.war;
+                   scp build/libs/petclinic.war root@192.168.52.110:/opt/tomcat/webapps/petclinic.war;
                    ssh tomcat@192.168.52.110 /opt/tomcat/bin/shutdown.sh;
                    ssh tomcat@192.168.52.110 /opt/tomcat/bin/startup.sh
                '''
