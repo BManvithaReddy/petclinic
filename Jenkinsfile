@@ -60,8 +60,8 @@ pipeline {
            steps {
                sh '''
                    scp build/libs/petclinic.war root@192.168.52.110:/opt/tomcat/webapps/petclinic.war;
-                   ssh tomcat@192.168.52.110 /opt/tomcat/bin/shutdown.sh;
-                   ssh tomcat@192.168.52.110 /opt/tomcat/bin/startup.sh
+                   ssh root@192.168.52.110 /opt/tomcat/bin/shutdown.sh;
+                   ssh root@192.168.52.110 /opt/tomcat/bin/startup.sh
                '''
                //sshPublisher(publishers: [sshPublisherDesc(configName: 'preprod', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '/opt/tomcat/bin/shutdown.sh;sleep 5;/opt/tomcat/bin/startup.sh', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/tomcat/webapps/', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'build/libs/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
 }
